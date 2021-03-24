@@ -66,18 +66,20 @@ jobs:
         run: |
           echo "DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}" >> $GITHUB_ENV
           echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
+          echo "DEPLOY_USERNAME=${{ secrets.DEPLOY_USERNAME }}" >> $GITHUB_ENV
 
       - name: remote docker-compose up via ssh
         uses: appleboy/ssh-action@v0.1.4
         env:
           TOKEN: ${{ env.DOCKERHUB_TOKEN }}
-          USERNAME: ${{ env.DOCKERHUB_USERNAME }}
+          HUB_USERNAME: ${{ env.DOCKERHUB_USERNAME }}
+          USERNAME: ${{ env.DEPLOY_USERNAME }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
-          envs: APPTOKEN,USERNAME
+          envs: APPTOKEN,USERNAME,HUB_USERNAME
           script: |
-            echo $TOKEN | docker login --username $USERNAME --password-stdin
+            echo $TOKEN | docker login --username HUB_USERNAME --password-stdin
             docker-compose -f ~/deploy/HubVanilla-docker-compose.yml up -d
