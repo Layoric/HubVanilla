@@ -71,7 +71,7 @@ jobs:
       - name: remote docker-compose up via ssh
         uses: appleboy/ssh-action@v0.1.4
         env:
-          TOKEN: ${{ env.DOCKERHUB_TOKEN }}
+          APPTOKEN: ${{ env.DOCKERHUB_TOKEN }}
           HUB_USERNAME: ${{ env.DOCKERHUB_USERNAME }}
           USERNAME: ${{ env.DEPLOY_USERNAME }}
         with:
@@ -79,7 +79,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
-          envs: TOKEN,USERNAME,HUB_USERNAME
+          envs: APPTOKEN,USERNAME,HUB_USERNAME
           script: |
-            echo $TOKEN | docker login --username HUB_USERNAME --password-stdin
+            echo $APPTOKEN | docker login --username HUB_USERNAME --password-stdin
             docker-compose -f ~/deploy/HubVanilla-docker-compose.yml up -d
